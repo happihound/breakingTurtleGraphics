@@ -5,13 +5,23 @@ import cv2
 from tqdm import tqdm
 
 
-def main():
+def main(pictureName, quality=0):
     lineResult = 0
-    # include abolute path to image
-    pictureName = ''
     img1 = cv2.imread(pictureName)
     img = cv2.imread(pictureName, 0)
+    if img is None:
+        print("Could not read input image")
+        return
     scale_percent = 100  # percent of original size
+    #fix the image if it is too small
+    if img.shape[0] < 800:
+        scale_percent = 200
+    if img.shape[0] < 400:
+        scale_percent = 400
+    if img.shape[0] < 200:
+        scale_percent = 800
+    if img.shape[0] < 100:
+        scale_percent = 1600
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -39,7 +49,7 @@ def main():
     points = []
     for contour in tqdm(contours):
         # change tolerance value to control quality
-        simplifiedLine = approximate_polygon(contour, tolerance=0)
+        simplifiedLine = approximate_polygon(contour, tolerance=quality)
         simplifiedLine = simplifiedLine.astype(np.int64).tolist()
         for index, coords in enumerate(simplifiedLine[:-1]):
             y1, x1, y2, x2 = coords + simplifiedLine[index + 1]
@@ -50,15 +60,16 @@ def main():
                                   (x2, y2), color[iterationCount])
         iterationCount = iterationCount + 1
     save(points)
-    lineResult = cv2.flip(lineResult, 0)
-    lineResult = cv2.cvtColor(lineResult, cv2.COLOR_BGR2RGB)
-    cv2.imshow("title",  lineResult)
-    cv2.waitKey()
+    #lineResult = cv2.flip(lineResult, 0)
+    #lineResult = cv2.cvtColor(lineResult, cv2.COLOR_BGR2RGB)
+    #uncomment to see preview of the image
+    #cv2.imshow("title",  lineResult)
+    #cv2.waitKey()
 
 
 def save(saved_points):
     saved_points = np.array(saved_points, dtype=object)
-    np.save('outputdata/polygonalPoints.npy',
+    np.save('polygonStorage/polygonalPoints.npy',
             saved_points)
 
 
@@ -70,4 +81,6 @@ def findColor(image, c):
     return tupint
 
 
-main()
+if __name__ == "__main__":
+    main("base_image/abbey_road.jpg")
+

@@ -1,14 +1,16 @@
 import turtle
 import numpy as np
 from tqdm import tqdm
-myTurtle = turtle.Turtle()
-screen = turtle.Screen()
-screen.tracer(100000, 0)
-screen.colormode(255)
-myTurtle.ht()
 
-
-def runme():
+def startDrawing():
+    myTurtle = turtle.Turtle()
+    screen = turtle.Screen()
+    screen.tracer(100000, 0)
+    screen.colormode(255)
+    myTurtle.ht()
+    screen.screensize(2000, 2000)
+    screen.bgcolor("black")
+    myTurtle.width(2)
     printInstructions = loadData()
     oldx = 0
     oldy = 0
@@ -33,20 +35,11 @@ def runme():
         oldx = x2
         oldy = y2
     screen.update()
+    screen.exitonclick()
 
 
 def loadData():
-    pathToData = 'outputData/polygonalPoints.npy'
+    pathToData = 'polygonStorage/polygonalPoints.npy'
     a = np.load(pathToData, allow_pickle=True)
     return a
 
-
-def main():
-    screen.screensize(2000, 2000)
-    screen.bgcolor("black")
-    myTurtle.width(2)
-    runme()
-    input("press enter to quit")
-
-
-main()
