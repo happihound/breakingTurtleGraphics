@@ -88,4 +88,4 @@ def findColor(image, contour):
 
 
 if __name__ == "__main__":
-    main("base_image/image.jpg")
+    main("base_image/abbey_road.jpg")
